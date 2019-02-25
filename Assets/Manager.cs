@@ -38,19 +38,19 @@ public enum Flags
 /// </summary>
 public class Manager : MonoBehaviour
 {
-    private string _brickId;
     public static ConversionModes ConversionMode;
-    private int _currentFile;
-    private int _garbageCounter;
 
     // user input
     public static string InputDirectory = @"C:\Some\Directory";
     public static string OutputDirectory = @"C:\Another\Directory";
+    public static bool ToG;
+    private string _brickId;
+    private int _currentFile;
+    private int _garbageCounter;
     private string[] _inputFiles;
     private MeshFilter _meshFilter;
     private int _startIndex;
     private DateTime _startTime;
-    public static bool ToG;
 
     // general
     private State _state;
@@ -92,7 +92,7 @@ public class Manager : MonoBehaviour
                 var conversionModeOptions = new[] {" Default", " No UVs", " No UVs, no groups"};
                 ConversionMode = (ConversionModes) GUI.SelectionGrid(new Rect(15, 130, 240, 62), (int) ConversionMode,
                     conversionModeOptions, 1, "toggle");
-                
+
                 //Toggle between convening to G or OBJ
                 if (GUI.Button(new Rect(15, 200, 240, 25), ToG ? "Converting To G" : "Converting To OBJ"))
                     ToG = !ToG;
@@ -105,7 +105,8 @@ public class Manager : MonoBehaviour
                         break;
                     }
 
-                    _inputFiles = Directory.GetFiles(InputDirectory, ToG ? "*.obj" : "*.g", SearchOption.AllDirectories);
+                    _inputFiles = Directory.GetFiles(InputDirectory, ToG ? "*.obj" : "*.g",
+                        SearchOption.AllDirectories);
                     //Debug.Log(inputFiles.Length + " bricks");
                     if (!_inputFiles.Any())
                     {
@@ -194,11 +195,13 @@ public class Manager : MonoBehaviour
             }
 
         var data = new MeshData(files);
-        
+
         // SHOW THE MESHES IN THE SCENE, EXPORT, DONE
 
         if (ToG)
+        {
             data.ExportToG();
+        }
         else
         {
             foreach (var mesh in data.Meshes) PlopMeshIntoScene(mesh);
